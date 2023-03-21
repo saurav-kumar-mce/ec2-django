@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy Django app to EC2
 
 on:
   push:
@@ -19,24 +19,55 @@ jobs:
     steps:
       - name: Checkout code from GitHub
         uses: actions/checkout@v2
+
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.1.4
+
       - name: Initialize Terraform
-        run: terraform init
-      - name: Apply Terraform
-        run: terraform apply -auto-approve
-      - name: Get instance ID
-        run: echo "Instance ID: ${{ steps.apply.outputs.django_id }}"
-  
-      - name: Install dependencies using Bash
         run: |
-          cd /django-ec2
-          sudo apt-get update
+          cd terraform
+          terraform init
+
+      - name: Plan Terraform
+        id: plan
+        run: |
+          cd terraform
+          terraform plan -out=plan.tfplan
+
+      - name: Apply Terraform
+        id: apply
+        run: |
+          cd terraform
+          terraform apply -auto-approve plan.tfplan
+        env:
+          TF_CLI_AUTO_APPROVE: 1
+
+      - name: Install Ansible
+        run: sudo apt-get install -y ansible
+
+      - name: Configure EC2 instance
+        run: ansible-playbook playbook.yml -i "${{ steps.apply.outputs.public_ip }},"
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: false
+
+      - name: Clone repository
+        run: |
+          cd ~
           git clone https://github.com/saurav-kumar-mce/ec2-django.git
-          sudo apt-get install -y python3-pip
-          pip install django
-          python3 manage.py makemigrations
-          python3 manage.py migrate
-          python3 manage.py runserver
+
+      - name: Install dependencies
+        run: |
+          cd ~/django-ec2
+          pip install -r requirements.txt
+
+      - name: Apply migrations
+        run: |
+          cd ~/django-ec2
+          python manage.py migrate
+
+      - name: Run Django server
+        run: |
+          cd ~/django-ec2
+          python manage.py runserver 0.0.0.0:8000
