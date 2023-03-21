@@ -59,15 +59,19 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd ~/django-ec2
-          pip install -r requirements.txt
+          cd ~/ec2-django
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip install django
+          python3 manage.py makemigrations
+
 
       - name: Apply migrations
         run: |
-          cd ~/django-ec2
+          cd ~/ec2-django
           python manage.py migrate
 
       - name: Run Django server
         run: |
-          cd ~/django-ec2
+          cd ~/ec2-django
           python manage.py runserver 0.0.0.0:8000
