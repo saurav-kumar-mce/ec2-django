@@ -48,7 +48,7 @@ jobs:
         run: sudo apt-get install -y ansible
 
       - name: Configure EC2 instance
-        run: ansible-playbook playbook.yml -i "${{ steps.apply.outputs.public_ip }},"
+        run: ansible-playbook ansible/playbook.yml -i "${{ steps.apply.outputs.public_ip }},"
         env:
           ANSIBLE_HOST_KEY_CHECKING: false
 
