@@ -1,0 +1,47 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  TF_VAR_region: ${{ secrets.TF_VAR_REGION }}
+  TF_VAR_ami: ${{ secrets.TF_VAR_AMI }}
+  TF_VAR_key_name: ${{ secrets.TF_VAR_KEY_NAME }}      
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code from GitHub
+        uses: actions/checkout@v2
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.4
+      - name: Initialize Terraform
+        run: terraform init
+      - name: Apply Terraform
+        run: terraform apply -auto-approve
+      - name: Install dependencies using Bash
+        run: |
+          cd /django-ec2
+          sudo apt-get update
+          git clone https://github.com/saurav-kumar-mce/ec2-django.git
+          sudo apt-get install -y python3-pip
+          pip install django
+#          cd /django-ec2/
+          python3 manage.py makemigrations
+          python3 manage.py migrate
+          python3 manage.py runserver
+#          pip3 install -r requirements.txt
+#      - name: Deploy app using Bash
+#        run: |
+#          cd /path/to/app
+#          python3 app.py
+#      - name: Install dependencies and deploy app using Ansible
+#        run: ansible-playbook -i <EC2_IP_ADDRESS>, playbook.yml --private-key my-ec2-key.pem
