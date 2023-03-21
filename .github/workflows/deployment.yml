@@ -27,6 +27,9 @@ jobs:
         run: terraform init
       - name: Apply Terraform
         run: terraform apply -auto-approve
+      - name: Get instance ID
+        run: echo "Instance ID: ${{ steps.apply.outputs.django_id }}"
+  
       - name: Install dependencies using Bash
         run: |
           cd /django-ec2
