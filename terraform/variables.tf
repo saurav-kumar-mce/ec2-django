@@ -5,7 +5,7 @@ variable "region" {
 
 variable "ami" {
   description = "The AMI ID for the EC2 instance"
-  type        = ""
+  type        = string
 }
 
 variable "key_name" {
