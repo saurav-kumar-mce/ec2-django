@@ -34,14 +34,6 @@ jobs:
           git clone https://github.com/saurav-kumar-mce/ec2-django.git
           sudo apt-get install -y python3-pip
           pip install django
-#          cd /django-ec2/
           python3 manage.py makemigrations
           python3 manage.py migrate
           python3 manage.py runserver
-#          pip3 install -r requirements.txt
-#      - name: Deploy app using Bash
-#        run: |
-#          cd /path/to/app
-#          python3 app.py
-#      - name: Install dependencies and deploy app using Ansible
-#        run: ansible-playbook -i <EC2_IP_ADDRESS>, playbook.yml --private-key my-ec2-key.pem
