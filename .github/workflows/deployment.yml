@@ -11,7 +11,9 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   TF_VAR_region: ${{ secrets.TF_VAR_REGION }}
   TF_VAR_ami: ${{ secrets.TF_VAR_AMI }}
-  TF_VAR_key_name: ${{ secrets.TF_VAR_KEY_NAME }}      
+  TF_VAR_key_name: ${{ secrets.TF_VAR_KEY_NAME }}
+  EC2_INSTANCE_USERNAME: ubuntu
+  EC2_INSTANCE_PRIVATE_KEY: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
 
 jobs:
   deploy:
@@ -44,8 +46,16 @@ jobs:
         env:
           TF_CLI_AUTO_APPROVE: 1
 
-      - name: Install Ansible
-        run: sudo apt-get install -y ansible
+      - name: SSH into EC2 instance and install Ansible
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ steps.apply.outputs.public_ip }}
+          username: ${{ env.EC2_INSTANCE_USERNAME }}
+          key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
+          port: 22
+          script: |
+            sudo apt-get update
+            sudo apt-get install -y ansible
 
       - name: Configure EC2 instance
         run: ansible-playbook ansible/playbook.yml -i "${{ steps.apply.outputs.public_ip }},"
@@ -64,7 +74,6 @@ jobs:
           sudo apt-get install -y python3-pip
           pip install django
           python3 manage.py makemigrations
-
 
       - name: Apply migrations
         run: |
