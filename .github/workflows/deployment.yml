@@ -30,7 +30,10 @@ jobs:
       - name: Initialize Terraform
         run: |
           cd terraform
-          terraform init
+          terraform init \
+            -backend-config="bucket=django-ec2-bucket" \
+            -backend-config="key=terraform.tfstate" \
+            -backend-config="region=ap-northeast-1"
 
       - name: Plan Terraform
         id: plan
