@@ -1,7 +1,7 @@
 ---
 - name: Install dependencies
   become: true
-  hosts: all
+  hosts: webservers
   tasks:
     - name: Update package list
       apt: update_cache=yes
