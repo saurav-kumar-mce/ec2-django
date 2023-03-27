@@ -51,7 +51,7 @@ jobs:
 
       - name: SSH into EC2 instance and install Ansible
         run: |
-          ssh-keyscan -H ${{ steps.apply.outputs.public_ip }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ steps.apply.outputs.public_ip }} >> ~/.ssh/54.199.54.228
           ssh -i ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }} ${{ env.EC2_INSTANCE_USERNAME }}@${{ steps.apply.outputs.public_ip }} 'sudo apt-get update && sudo apt-get install -y ansible'
 
 
