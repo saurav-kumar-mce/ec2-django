@@ -49,14 +49,14 @@ jobs:
         env:
           TF_CLI_AUTO_APPROVE: 1
 
-      - name: SSH into EC2 instance and install Ansible
+      - name: Add SSH key to known_hosts
         run: |
-          ssh-keyscan -H ${{ steps.apply.outputs.public_ip }} >> ~/.ssh/54.199.54.228
-          ssh -i ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }} ${{ env.EC2_INSTANCE_USERNAME }}@${{ steps.apply.outputs.public_ip }} 'sudo apt-get update && sudo apt-get install -y ansible'
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ steps.apply.outputs.public_ip }} >> ~/.ssh/known_hosts
 
-
-      - name: Configure EC2 instance
-        run: ansible-playbook ansible/playbook.yml -i "${{ steps.apply.outputs.public_ip }},"
+      - name: Install Ansible and configure EC2 instance
+        run: |
+          ansible-playbook ansible/playbook.yml -i "${{ steps.apply.outputs.public_ip }},"
         env:
           ANSIBLE_HOST_KEY_CHECKING: false
 
