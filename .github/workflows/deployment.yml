@@ -50,15 +50,10 @@ jobs:
           TF_CLI_AUTO_APPROVE: 1
 
       - name: SSH into EC2 instance and install Ansible
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ steps.apply.outputs.public_ip }}
-          username: ${{ env.EC2_INSTANCE_USERNAME }}
-          key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
-          port: 22
-          script: |
-            sudo apt-get update
-            sudo apt-get install -y ansible
+        run: |
+          ssh-keyscan -H ${{ steps.apply.outputs.public_ip }} >> ~/.ssh/known_hosts
+          ssh -i ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }} ${{ env.EC2_INSTANCE_USERNAME }}@${{ steps.apply.outputs.public_ip }} 'sudo apt-get update && sudo apt-get install -y ansible'
+
 
       - name: Configure EC2 instance
         run: ansible-playbook ansible/playbook.yml -i "${{ steps.apply.outputs.public_ip }},"
