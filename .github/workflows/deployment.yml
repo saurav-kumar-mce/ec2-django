@@ -48,8 +48,11 @@ jobs:
           terraform apply -auto-approve plan.tfplan
         env:
           TF_CLI_AUTO_APPROVE: 1
+      - name: Save private key
+        run: echo "${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}" > ~/.ssh/django-new.pem
 
-
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3 
 
       - name: Set private key file permissions
         run: |
@@ -62,7 +65,7 @@ jobs:
         with:
           host: ${{ steps.apply.outputs.public_ip }}
           username: ${{ env.EC2_INSTANCE_USERNAME }}
-          key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
+          key: django-new.pem
           port: 22
           script: |
             sudo apt-get update
