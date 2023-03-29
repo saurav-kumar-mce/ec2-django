@@ -62,7 +62,7 @@ jobs:
         with:
           host: ${{ steps.apply.outputs.public_ip }}
           username: ${{ env.EC2_INSTANCE_USERNAME }}
-          key: django-new.pem
+          key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
           port: 22
           script: |
             sudo apt-get update
