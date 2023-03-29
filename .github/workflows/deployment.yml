@@ -48,17 +48,15 @@ jobs:
           terraform apply -auto-approve plan.tfplan
         env:
           TF_CLI_AUTO_APPROVE: 1
-      - name: Save private key
-        run: echo "${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}" > ~/.ssh/django-new.pem
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3 
-
+          
       - name: Set private key file permissions
         run: |
           echo "${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}" > django-new.pem
           chmod 400 django-new.pem
         shell: bash
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3   
 
       - name: SSH into EC2 instance and install Ansible
         uses: appleboy/ssh-action@master
