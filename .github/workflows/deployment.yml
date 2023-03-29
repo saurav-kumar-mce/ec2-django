@@ -49,8 +49,7 @@ jobs:
         env:
           TF_CLI_AUTO_APPROVE: 1
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3 
+
 
       - name: Set private key file permissions
         run: |
