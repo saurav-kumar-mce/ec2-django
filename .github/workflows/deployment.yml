@@ -55,24 +55,14 @@ jobs:
           chmod 400 django-new.pem
         shell: bash
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3   
+      - name: Install AWS CLI
+        uses: aws-actions/aws-cli@v2
+        with:
+          install-dir: /usr/local/bin/
 
       - name: SSH into EC2 instance and install Ansible
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ steps.apply.outputs.public_ip }}
-          username: ${{ env.EC2_INSTANCE_USERNAME }}
-          key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
-          port: 22
-          script: |
-            sudo apt-get update
-            sudo apt-get install -y ansible
-
-      - name: Configure EC2 instance
-        run: ansible-playbook ansible/playbook.yml -i "${{ steps.apply.outputs.public_ip }},"
-        env:
-          ANSIBLE_HOST_KEY_CHECKING: false
+        run: |
+          ssh -i django-new.pem -o StrictHostKeyChecking=no ${env.EC2_INSTANCE_USERNAME}@${{ steps.apply.outputs.public_ip }} 'sudo apt-get update && sudo apt-get install -y ansible'
 
       - name: Clone repository
         run: |
@@ -96,3 +86,4 @@ jobs:
         run: |
           cd ~/ec2-django
           python manage.py runserver 0.0.0.0:8000
+
