@@ -58,16 +58,17 @@ jobs:
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3   
 
-      - name: SSH into EC2 instance and install Ansible
-        uses: ssh-actions/ssh-deploy@v1.1.0
+      - name: SSH into server and execute remote script
+        uses: jakejarvis/ssh-remote-script@4.3.0
         with:
-         ssh-private-key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
-         ssh-strict: true
-         host: ${{ steps.apply.outputs.public_ip }}
-         username: ${{ env.EC2_INSTANCE_USERNAME }}
-         script: |
-           sudo apt-get update
-           sudo apt-get install -y ansible
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y ansible
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
+          SSH_USERNAME: ubuntu
+          SSH_HOST: 3.112.209.2
+
 
 
       - name: Configure EC2 instance
