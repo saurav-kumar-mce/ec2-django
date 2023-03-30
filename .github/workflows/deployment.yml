@@ -59,15 +59,16 @@ jobs:
 #        uses: mxschmitt/action-tmate@v3   
 
       - name: SSH into EC2 instance and install Ansible
-        uses: appleboy/ssh-action@master
+        uses: webfactory/ssh-agent@v0.5.1
         with:
-          host: ${{ steps.apply.outputs.public_ip }}
-          username: ${{ env.EC2_INSTANCE_USERNAME }}
-          key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
-          port: 22
-          script: |
-            sudo apt-get update
-            sudo apt-get install -y ansible
+          ssh-private-key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
+          ssh-strict: true
+        env:
+          REMOTE_USER: ${{ env.EC2_INSTANCE_USERNAME }}
+          REMOTE_HOST: ${{ steps.apply.outputs.public_ip }}
+        run: |
+          ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "sudo apt-get update && sudo apt-get install -y ansible"
+
 
 
       - name: Configure EC2 instance
