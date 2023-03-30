@@ -55,21 +55,19 @@ jobs:
           chmod 400 django-new.pem
         shell: bash
 
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3   
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3   
 
-      - name: SSH into server and execute remote script
-        uses: jakejarvis/ssh-remote-script@4.3.0
+      - name: SSH into EC2 instance and install Ansible
+        uses: appleboy/ssh-action@master
         with:
-          command: |
+          host: ${{ steps.apply.outputs.public_ip }}
+          username: ${{ env.EC2_INSTANCE_USERNAME }}
+          key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
+          port: 22
+          script: |
             sudo apt-get update
             sudo apt-get install -y ansible
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
-          SSH_USERNAME: ubuntu
-          SSH_HOST: 3.112.209.2
-
-
 
       - name: Configure EC2 instance
         run: ansible-playbook ansible/playbook.yml -i "${{ steps.apply.outputs.public_ip }},"
