@@ -58,32 +58,16 @@ jobs:
       - name: Install AWS CLI
         uses: aws-actions/aws-cli@v2
         with:
-          install-dir: /usr/local/bin/
+          version: 2
 
-      - name: SSH into EC2 instance and install Ansible
+      - name: Copy files to EC2 instance
         run: |
-          ssh -i django-new.pem -o StrictHostKeyChecking=no ${env.EC2_INSTANCE_USERNAME}@${{ steps.apply.outputs.public_ip }} 'sudo apt-get update && sudo apt-get install -y ansible'
+          scp -i django-new.pem -o StrictHostKeyChecking=no -r ./* ${{ env.EC2_INSTANCE_USERNAME }}@${{ steps.apply.outputs.public_ip }}:/home/ubuntu/
+        shell: bash
 
-      - name: Clone repository
+      - name: SSH into EC2 instance and install dependencies
         run: |
-          cd ~
-          git clone https://github.com/saurav-kumar-mce/ec2-django.git
-
-      - name: Install dependencies
-        run: |
-          cd ~/ec2-django
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip install django
-          python3 manage.py makemigrations
-
-      - name: Apply migrations
-        run: |
-          cd ~/ec2-django
-          python manage.py migrate
-
-      - name: Run Django server
-        run: |
-          cd ~/ec2-django
-          python manage.py runserver 0.0.0.0:8000
-
+          ssh -i django-new.pem -o StrictHostKeyChecking=no ${{ env.EC2_INSTANCE_USERNAME }}@${{ steps.apply.outputs.public_ip }} 'sudo apt-get update && sudo apt-get install -y python3-pip && sudo pip3 install django'
+          ssh -i django-new.pem -o StrictHostKeyChecking=no ${{ env.EC2_INSTANCE_USERNAME }}@${{ steps.apply.outputs.public_ip }} 'cd /home/ubuntu && python3 manage.py makemigrations && python3 manage.py migrate'
+          ssh -i django-new.pem -o StrictHostKeyChecking=no ${{ env.EC2_INSTANCE_USERNAME }}@${{ steps.apply.outputs.public_ip }} 'cd /home/ubuntu && nohup python3 manage.py runserver 0.0.0.0:8000 &'
+        shell: bash
