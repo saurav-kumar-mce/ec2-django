@@ -55,8 +55,8 @@ jobs:
           chmod 400 django-new.pem
         shell: bash
 
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3   
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3   
 
       - name: SSH into EC2 instance and install Ansible
         uses: appleboy/ssh-action@master
