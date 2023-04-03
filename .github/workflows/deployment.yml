@@ -58,7 +58,7 @@ jobs:
       - name: Deploy in EC2
         env:
             PRIVATE_KEY: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY  }}
-            HOSTNAME : ${{ steps.apply.outputs.public_ip }}
+            HOSTNAME : 3.112.209.2
             USER_NAME : ${{ env.EC2_INSTANCE_USERNAME }}
       
         run: |
