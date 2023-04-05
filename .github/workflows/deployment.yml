@@ -60,12 +60,14 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
           sudo apt-get update
           sudo apt-get install -y ansible
-          '
-          
-      - name: Clone repository
-        run: |
           cd ~
           git clone https://github.com/saurav-kumar-mce/ec2-django.git
+          '
+          
+#      - name: Clone repository
+#        run: |
+#          cd ~
+#          git clone https://github.com/saurav-kumar-mce/ec2-django.git
 
       - name: Install dependencies
         run: |
