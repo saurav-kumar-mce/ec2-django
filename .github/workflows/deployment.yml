@@ -49,21 +49,10 @@ jobs:
         env:
           TF_CLI_AUTO_APPROVE: 1          
 
-      - name: Deploy in EC2
-        env:
-            PRIVATE_KEY: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY  }}
-            HOSTNAME : 3.112.209.2
-            USER_NAME : ${{ env.EC2_INSTANCE_USERNAME }}
-      
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-          sudo apt-get update
-          sudo apt-get install -y ansible
-          '
-          
       - name: Configure EC2 instance
-        run: ansible-playbook ansible/playbook.yml -i "3.112.209.2,"
+        run: |
+          cd ansible
+          ansible-playbook playbook.yml -i "3.112.209.2," --private-key=$EC2_INSTANCE_PRIVATE_KEY --user=$EC2_INSTANCE_USERNAME
         env:
           ANSIBLE_HOST_KEY_CHECKING: false
 
