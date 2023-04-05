@@ -47,13 +47,7 @@ jobs:
           cd terraform
           terraform apply -auto-approve plan.tfplan
         env:
-          TF_CLI_AUTO_APPROVE: 1
-          
-#      - name: Set private key file permissions
-#        run: |
-#          echo "${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}" > django-new.pem
-#          chmod 400 django-new.pem
-#        shell: bash
+          TF_CLI_AUTO_APPROVE: 1          
 
       - name: Deploy in EC2
         env:
@@ -67,22 +61,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ansible
           '
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3   
-
-#      - name: SSH into EC2 instance and install Ansible
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ steps.apply.outputs.public_ip }}
-#          username: ${{ env.EC2_INSTANCE_USERNAME }}
-#          key_path: django-new.pem
-#          port: 22
-#          script: |
-#            sudo apt-get update
-#            sudo apt-get install -y ansible
-
+          
       - name: Configure EC2 instance
-        run: ansible-playbook ansible/playbook.yml -i "${{ steps.apply.outputs.public_ip }},"
+        run: ansible-playbook ansible/playbook.yml -i "3.112.209.2,"
         env:
           ANSIBLE_HOST_KEY_CHECKING: false
 
