@@ -49,13 +49,19 @@ jobs:
         env:
           TF_CLI_AUTO_APPROVE: 1          
 
-      - name: Configure EC2 instance
-        run: |
-          cd ansible
-          ansible-playbook playbook.yml -i "3.112.209.2," --private-key=$EC2_INSTANCE_PRIVATE_KEY --user=$EC2_INSTANCE_USERNAME
+      - name: Deploy in EC2
         env:
-          ANSIBLE_HOST_KEY_CHECKING: false
-
+            PRIVATE_KEY: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY  }}
+            HOSTNAME : 3.112.209.2
+            USER_NAME : ${{ env.EC2_INSTANCE_USERNAME }}
+      
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+          sudo apt-get update
+          sudo apt-get install -y ansible
+          '
+          
       - name: Clone repository
         run: |
           cd ~
@@ -67,11 +73,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3-pip
           pip install django
-          python3 manage.py makemigrations
 
       - name: Apply migrations
         run: |
           cd ~/ec2-django
+          python manage.py makemigrations
           python manage.py migrate
 
       - name: Run Django server
