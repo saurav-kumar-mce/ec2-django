@@ -59,30 +59,47 @@ jobs:
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
           sudo apt-get update
-          sudo apt-get install -y ansible
-          cd ~
-          git clone https://github.com/saurav-kumar-mce/ec2-django.git
+          sudo apt-get install -y supervisor nginx
+          sudo rm /etc/nginx/sites-enabled/default
+          sudo systemctl restart nginx
+          sudo systemctl reload nginx
+          sudo supervisorctl reread
+          sudo supervisorctl update
+          sudo supervisorctl start django
           '
           
-#      - name: Clone repository
-#        run: |
-#          cd ~
-#          git clone https://github.com/saurav-kumar-mce/ec2-django.git
+      - name: Clone repository
+        run: |
+          cd ~
+          git clone https://github.com/saurav-kumar-mce/ec2-django.git
 
       - name: Install dependencies
         run: |
-          cd ec2-django
+          cd ~/ec2-django
           sudo apt-get update
           sudo apt-get install -y python3-pip
           pip install django
 
       - name: Apply migrations
         run: |
-          cd ec2-django
+          cd ~/ec2-django
           python manage.py makemigrations
           python manage.py migrate
 
-      - name: Run Django server
+      - name: Collect static files
         run: |
-          cd ec2-django
-          python manage.py runserver 0.0.0.0:8000
+          cd ~/ec2-django
+          python manage.py collectstatic --noinput
+
+      - name: Configure Nginx
+        run: |
+          cd ~/ec2-django
+          sudo cp nginx.conf /etc/nginx/sites-available/django
+          sudo ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/
+          sudo systemctl restart nginx
+
+      - name: Configure Supervisor
+        run: |
+          cd ~/ec2-django
+          sudo cp supervisor.conf /etc/supervisor/conf.d/django.conf
+         
