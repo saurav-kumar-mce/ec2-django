@@ -70,7 +70,7 @@ jobs:
           
       - name: Clone repository
         run: |
-          cd ~
+          cd ~/ec2-django
           git clone https://github.com/saurav-kumar-mce/ec2-django.git
 
       - name: Install dependencies
@@ -94,6 +94,7 @@ jobs:
       - name: Configure Nginx
         run: |
           cd ~/ec2-django
+          sudo cp nginx.conf /etc/nginx/sites-available/django
           sudo ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/
           sudo systemctl restart nginx
 
