@@ -94,7 +94,7 @@ jobs:
       - name: Configure Nginx
         run: |
           cd ~/ec2-django
-          sudo cp nginx.conf /etc/nginx/sites-available/django
+#          sudo cp nginx.conf /etc/nginx/sites-available/django
           sudo ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/
           sudo systemctl restart nginx
 
