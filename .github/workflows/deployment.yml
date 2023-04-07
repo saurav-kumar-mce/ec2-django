@@ -67,6 +67,11 @@ jobs:
           sudo supervisorctl update
           sudo supervisorctl start django
           '
+                          
+      - name: Create ec2-django directory
+        run: |
+          mkdir ~/ec2-django
+        ignore_errors: true
           
       - name: Clone repository
         run: |
