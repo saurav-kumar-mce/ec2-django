@@ -86,7 +86,7 @@ jobs:
 
       - name: Apply migrations
         run: |
-          cd ~/ec2-django
+          cd ~/ec2-django/ec2-django
           python manage.py makemigrations
           python manage.py migrate
 
