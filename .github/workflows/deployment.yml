@@ -66,44 +66,21 @@ jobs:
           sudo supervisorctl reread
           sudo supervisorctl update
           sudo supervisorctl start django
-          '
-
-      - name: Create ec2-django directory
-        run: |
-          mkdir ~/ec2-django
-          
-      - name: Clone repository
-        run: |
-          cd ~/ec2-django
+          cd ~
           git clone https://github.com/saurav-kumar-mce/ec2-django.git
-
-      - name: Install dependencies
-        run: |
           cd ~/ec2-django
           sudo apt-get update
           sudo apt-get install -y python3-pip
           pip install django
-
-      - name: Apply migrations
-        run: |
-          cd ~/ec2-django/ec2-django
           python manage.py makemigrations
           python manage.py migrate
-
-      - name: Collect static files
-        run: |
-          cd ~/ec2-django/ec2-django
           python manage.py collectstatic --noinput
-
-      - name: Configure Nginx
-        run: |
-          cd ~/ec2-django/ec2-django
           sudo cp nginx.conf /etc/nginx/sites-available/django
           sudo ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/
           sudo systemctl restart nginx
-
+          '
       - name: Configure Supervisor
         run: |
-          cd ~/ec2-django/ec2-django
+          cd ~/ec2-django
           sudo cp supervisor.conf /etc/supervisor/conf.d/django.conf
          
