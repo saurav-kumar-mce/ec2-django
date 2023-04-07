@@ -78,9 +78,6 @@ jobs:
           sudo cp nginx.conf /etc/nginx/sites-available/django
           sudo ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/
           sudo systemctl restart nginx
-          '
-      - name: Configure Supervisor
-        run: |
-          cd ~/ec2-django
           sudo cp supervisor.conf /etc/supervisor/conf.d/django.conf
+          '
          
