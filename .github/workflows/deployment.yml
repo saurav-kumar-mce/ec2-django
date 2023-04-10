@@ -67,12 +67,16 @@ jobs:
           sudo supervisorctl update
           sudo supervisorctl start django
           '
-          
+      
+      - name: Create ec2-django directory
+        run: |
+          mkdir ~/ec2-django 
+
       - name: Clone repository
-        uses: actions/checkout@v2
-        with:
-        repository: saurav-kumar-mce/ec2-django
-        path: ~/ec2-django
+        run: |
+          cd ~/ec2-django
+          sudo git clone https://github.com/saurav-kumar-mce/ec2-django.git ec2-django
+
 
       - name: Install dependencies
         run: |
