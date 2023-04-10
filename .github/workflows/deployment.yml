@@ -71,7 +71,7 @@ jobs:
       - name: Clone repository
         run: |
           cd ~
-          sudo git clone git@github.com:saurav-kumar-mce/ec2-django.git
+          git clone https://github.com/saurav-kumar-mce/ec2-django.git ~/ec2-django
 
       - name: Install dependencies
         run: |
