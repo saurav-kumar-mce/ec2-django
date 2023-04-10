@@ -59,6 +59,8 @@ jobs:
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
           sudo apt-get update
+          cd ~/
+          sudo git clone https://github.com/saurav-kumar-mce/ec2-django.git /home/ubuntu/ec2-django
           sudo apt-get install -y supervisor nginx
           sudo rm /etc/nginx/sites-enabled/default
           sudo systemctl restart nginx
@@ -67,16 +69,6 @@ jobs:
           sudo supervisorctl update
           sudo supervisorctl start django
           '
-      
-      - name: Create ec2-django directory
-        run: |
-          sudo mkdir ~/ec2-django 
-
-      - name: Clone repository
-        run: |
-          cd ~/ec2-django
-          sudo git clone https://github.com/saurav-kumar-mce/ec2-django.git /home/ubuntu/ec2-django
-
 
       - name: Install dependencies
         run: |
