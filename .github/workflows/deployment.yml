@@ -74,8 +74,6 @@ jobs:
           python manage.py makemigrations
           python manage.py migrate
           python manage.py collectstatic --noinput
-          sudo cp nginx.conf /etc/nginx/sites-available/django
           sudo ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/
           sudo systemctl restart nginx
-          sudo cp supervisor.conf /etc/supervisor/conf.d/django.conf
           '
