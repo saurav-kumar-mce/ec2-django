@@ -71,9 +71,9 @@ jobs:
           cd ~/ec2-django
           sudo apt-get install -y python3-pip
           pip install django
-          python manage.py makemigrations
-          python manage.py migrate
-          python manage.py collectstatic --noinput
+          python3 manage.py makemigrations
+          python3 manage.py migrate
+          python3 manage.py collectstatic --noinput
           sudo ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/
           sudo systemctl restart nginx
           '
