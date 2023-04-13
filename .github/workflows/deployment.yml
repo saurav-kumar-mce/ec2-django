@@ -79,5 +79,4 @@ jobs:
           python3 manage.py collectstatic --noinput
           sudo ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/
           sudo systemctl restart nginx
-          sudo supervisorctl start todos
           '
