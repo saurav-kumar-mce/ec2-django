@@ -69,11 +69,15 @@ jobs:
           cd ~/
           sudo git clone https://github.com/saurav-kumar-mce/ec2-django.git /home/ubuntu/ec2-django
           cd ~/ec2-django
+          python3 -m venv myvenv
+          source myvenv/bin/activate
+          cd ~/ec2-django
           sudo apt-get install -y python3-pip
-          pip install django
+          pip install django gunicorn
           python3 manage.py makemigrations
           python3 manage.py migrate
           python3 manage.py collectstatic --noinput
           sudo ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/
           sudo systemctl restart nginx
+          sudo supervisorctl start todos
           '
